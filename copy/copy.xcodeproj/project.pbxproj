@@ -15,6 +15,8 @@
 		0B9F364C208446FD004F1504 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B9F364B208446FD004F1504 /* main.m */; };
 		0B9F3654208451A3004F1504 /* TestView.m in Sources */ = {isa = PBXBuildFile; fileRef = 0B9F3653208451A3004F1504 /* TestView.m */; };
 		0B9F365620845FE8004F1504 /* copyMutableCopy.png in Resources */ = {isa = PBXBuildFile; fileRef = 0B9F365520845FE8004F1504 /* copyMutableCopy.png */; };
+		0BF490B72085901000F4A883 /* EXCar.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF490B62085901000F4A883 /* EXCar.m */; };
+		0BF490BA208590A200F4A883 /* EXMutableCar.m in Sources */ = {isa = PBXBuildFile; fileRef = 0BF490B9208590A200F4A883 /* EXMutableCar.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +33,10 @@
 		0B9F3652208451A3004F1504 /* TestView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestView.h; sourceTree = "<group>"; };
 		0B9F3653208451A3004F1504 /* TestView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestView.m; sourceTree = "<group>"; };
 		0B9F365520845FE8004F1504 /* copyMutableCopy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = copyMutableCopy.png; sourceTree = "<group>"; };
+		0BF490B52085901000F4A883 /* EXCar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EXCar.h; sourceTree = "<group>"; };
+		0BF490B62085901000F4A883 /* EXCar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EXCar.m; sourceTree = "<group>"; };
+		0BF490B8208590A200F4A883 /* EXMutableCar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EXMutableCar.h; sourceTree = "<group>"; };
+		0BF490B9208590A200F4A883 /* EXMutableCar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EXMutableCar.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,6 +75,10 @@
 				0B9F3640208446FB004F1504 /* ViewController.m */,
 				0B9F3652208451A3004F1504 /* TestView.h */,
 				0B9F3653208451A3004F1504 /* TestView.m */,
+				0BF490B52085901000F4A883 /* EXCar.h */,
+				0BF490B62085901000F4A883 /* EXCar.m */,
+				0BF490B8208590A200F4A883 /* EXMutableCar.h */,
+				0BF490B9208590A200F4A883 /* EXMutableCar.m */,
 				0B9F365520845FE8004F1504 /* copyMutableCopy.png */,
 				0B9F3642208446FB004F1504 /* Main.storyboard */,
 				0B9F3645208446FD004F1504 /* Assets.xcassets */,
@@ -150,9 +160,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0BF490BA208590A200F4A883 /* EXMutableCar.m in Sources */,
 				0B9F3654208451A3004F1504 /* TestView.m in Sources */,
 				0B9F3641208446FB004F1504 /* ViewController.m in Sources */,
 				0B9F364C208446FD004F1504 /* main.m in Sources */,
+				0BF490B72085901000F4A883 /* EXCar.m in Sources */,
 				0B9F363E208446FB004F1504 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

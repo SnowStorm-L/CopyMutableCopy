@@ -8,6 +8,8 @@
 
 #import "ViewController.h"
 #import "TestView.h"
+#import "EXCar.h"
+#import "EXMutableCar.h"
 
 @interface ViewController ()
 
@@ -23,7 +25,7 @@
     // 另外集合对象和非集合对象的拷贝也是有差别的
     
     // 官网关于浅拷贝和深拷贝的介绍
-
+    
     // https://developer.apple.com/library/content/documentation/CoreFoundation/Conceptual/CFMemoryMgmt/Concepts/CopyFunctions.html#//apple_ref/doc/uid/20001149-CJBEJBHH
     // 集合对象的拷贝
     // https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/Collections/Articles/Copying.html#//apple_ref/doc/uid/TP40010162-SW1
@@ -31,9 +33,17 @@
     //[self nonCollectionObjectsTest];
     //[self collectionObjectsTest];
     //[self realDeepCopyInCollectionMethodOne];
-    [self realDeepCopyInCollectionMethodTwo];
+    //[self realDeepCopyInCollectionMethodTwo];
     
-  
+    // How to implement properly mutableCopyWithZone and copyWithZone
+    [self carDemo];
+    
+    
+    // TODO: Unfinished, to be continued
+    /* Discover new things
+     NSDictionary *originalDictionary = @{@"1": @"2"};
+     NSMutableDictionary *mutableCopy = (NSMutableDictionary *)CFBridgingRelease(CFPropertyListCreateDeepCopy(kCFAllocatorDefault, (CFDictionaryRef)originalDictionary, kCFPropertyListMutableContainers));
+     */
 }
 
 - (void)nonCollectionObjectsTest {
@@ -94,7 +104,7 @@
     
     NSLog(@"mutableCopyOriginNSArray 的存储地址 %p 是单层深拷贝", mutableCopyOriginNSArray);
     NSLog(@"mutableCopyOriginNSArray view1 的存储地址 %p 与源地址相同", mutableCopyOriginNSArray[0]);
-
+    
     NSLog(@"\n");
     
     NSMutableArray *originNSMutableArray = [NSMutableArray arrayWithObjects:view1, view2, nil];
@@ -108,9 +118,9 @@
     
     NSLog(@"copyOriginNSMutableArray 的存储地址 %p 是单层深拷贝", copyOriginNSMutableArray);
     NSLog(@"copyOriginNSMutableArray view1 的存储地址 %p 与源地址相同", copyOriginNSMutableArray[0]);
-
+    
     NSLog(@"\n");
-
+    
     NSLog(@"mutableCopyOriginNSMutableArray 的存储地址 %p 是单层深拷贝", mutableCopyOriginNSMutableArray);
     NSLog(@"mutableCopyOriginNSMutableArray view1 的存储地址 %p 与源地址相同", mutableCopyOriginNSMutableArray[0]);
     
@@ -124,20 +134,22 @@
      */
     
     /*
-    如果在多层数组中，对第一层进行内容拷贝，其它层进行指针拷贝，这种情况是属于深复制，还是浅复制？
+     如果在多层数组中，对第一层进行内容拷贝，其它层进行指针拷贝，这种情况是属于深复制，还是浅复制？
      
-    对此，苹果官网文档有这样一句话描述:(看上面给出的集合类对象官方文档链接)
-
-    This kind of copy is only capable of producing a one-level-deep copy. If you only need a one-level-deep copy...
-    
-    If you need a true deep copy, such as when you have an array of arrays...
-    
-    从文中可以看出，苹果认为这种复制不是真正的深复制，而是将其称为单层深复制(one-level-deep copy)。
+     对此，苹果官网文档有这样一句话描述:(看上面给出的集合类对象官方文档链接)
      
-    因此，有人对浅复制、完全深复制、单层深复制做了概念区分。
+     This kind of copy is only capable of producing a one-level-deep copy. If you only need a one-level-deep copy...
      
-    当然，这些都是概念性的东西，没有必要纠结于此。
-    */
+     If you need a true deep copy, such as when you have an array of arrays...
+     
+     从文中可以看出，苹果认为这种复制不是真正的深复制，而是将其称为单层深复制(one-level-deep copy)。
+     
+     因此，有人对浅复制、完全深复制、单层深复制做了概念区分。
+     
+     当然，这些都是概念性的东西，没有必要纠结于此。
+     
+     以上String和Array的测试结论可以看工程copyMutableCopy.png图片与代码印证
+     */
 }
 
 
@@ -146,7 +158,7 @@
     UIView *view1 = [UIView new];
     
     NSLog(@"view1 的存储地址 %p ", view1);
-
+    
     NSArray<UIView *> *originNSArray = @[view1];
     NSLog(@"originNSArray 的存储地址 %p", originNSArray);
     
@@ -158,7 +170,7 @@
     
     NSLog(@"trueDeepCopyArray view1 的存储地址 %p 与源地址不相同", trueDeepCopyArray[0]);
     NSLog(@"trueDeepCopyArray 的存储地址 %p 是完全深复制", trueDeepCopyArray);
-
+    
 }
 
 - (void)realDeepCopyInCollectionMethodTwo {
@@ -198,13 +210,28 @@
     
     NSLog(@"testcopyItems 的存储地址 %p ", testcopyItems);
     
-    NSMutableArray *result = [[NSMutableArray alloc]initWithArray:testcopyItems copyItems:YES];
+    __unused NSMutableArray *result = [[NSMutableArray alloc]initWithArray:testcopyItems copyItems:YES];
     
-//   注意原本2层都是可变数组,  进行了copyItems操作后result[0]就由可变数组变成不可变数组了
-//   执行以下代码会崩溃
-//   [result[0] addObject:@[view3]];
-  
-    // TODO: 后续..............
+    //   注意原本2层都是可变数组,  进行了copyItems操作后result[0]就由可变数组变成不可变数组了
+    //   执行以下代码会崩溃
+    //   [result[0] addObject:@[view3]];
+    
+}
+
+- (void)carDemo {
+    
+    EXCar *car = [[EXCar alloc]init]; // car.name is (null)
+    NSLog(@"car.name is %@", car.name);
+    EXCar *carCopy = [car copy]; // we can do this
+    NSLog(@"carCopy type %@", carCopy.classForCoder);
+    EXMutableCar *mutableCar = [car mutableCopy]; // and this
+    NSLog(@"mutableCar type %@", mutableCar.classForCoder);
+    mutableCar.name = @"BMW";
+    car = [mutableCar copy]; // car.name is now @"BMW"
+    NSLog(@"car.name is %@", car.name);
+    NSLog(@"car type %@", car.classForCoder);
+    EXMutableCar *anotherMutableCar = [car mutableCopy]; //anotherMutableCar.name is @"BMW"
+    NSLog(@"car.name is %@", anotherMutableCar.name);
 }
 
 - (void)didReceiveMemoryWarning {
