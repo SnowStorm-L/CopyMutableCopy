@@ -34,16 +34,10 @@
     //[self collectionObjectsTest];
     //[self realDeepCopyInCollectionMethodOne];
     //[self realDeepCopyInCollectionMethodTwo];
+    //[self realDeepCopyInCollectionMethodThree];
     
     // How to implement properly mutableCopyWithZone and copyWithZone
-    [self carDemo];
-    
-    
-    // TODO: Unfinished, to be continued
-    /* Discover new things
-     NSDictionary *originalDictionary = @{@"1": @"2"};
-     NSMutableDictionary *mutableCopy = (NSMutableDictionary *)CFBridgingRelease(CFPropertyListCreateDeepCopy(kCFAllocatorDefault, (CFDictionaryRef)originalDictionary, kCFPropertyListMutableContainers));
-     */
+    //[self carDemo];
 }
 
 - (void)nonCollectionObjectsTest {
@@ -185,8 +179,8 @@
     NSLog(@"view2 的存储地址 %p ", view2);
     
     // 这2种结果相同都是完全深复制
-    //NSMutableArray *originArray = [[NSMutableArray alloc]initWithObjects:view2, view3, nil];
-    NSArray *originArray = @[view2, view3];
+    NSMutableArray *originArray = [[NSMutableArray alloc]initWithObjects:view2, view3, nil];
+    //NSArray *originArray = @[view2, view3];
     
     NSLog(@"originArray 的存储地址 %p ", originArray);
     
@@ -216,6 +210,67 @@
     //   执行以下代码会崩溃
     //   [result[0] addObject:@[view3]];
     
+}
+
+- (void)realDeepCopyInCollectionMethodThree {
+    
+   // 方法3
+   // CFPropertyListCreateDeepCopy(<#CFAllocatorRef allocator#>, <#CFPropertyListRef propertyList#>, <#CFOptionFlags mutabilityOption#>)
+   // 递归地创建给定属性列表的副本（如此嵌套数组字典以及最上面的容器都被复制）。
+    // 先解释一下3个参数
+    /*
+     参数1: CFAllocatorRef allocator
+     填NULL或同义词kCFAllocatorDefault
+     */
+    /*
+     参数2: CFPropertyListRef propertyList
+        源数据根属性(输入参数最外层的类型)
+         CFArrayRef;
+         CFMutableArrayRef;
+         CFDictionaryRef;
+         ....等等
+     */
+    /*
+     参数3: CFOptionFlags mutabilityOption
+         kCFPropertyListImmutable
+         指定属性列表应为不可变。
+         kCFPropertyListMutableContainers
+         指定属性列表应具有可变容器, 但不变的叶。
+         kCFPropertyListMutableContainersAndLeaves
+         指定属性列表应具有可变容器和可变叶。
+     */
+
+    
+    // 用途(暂时只发现在解析json用得比较多)
+    
+    // 温故
+    // 枚举NSJSONReadingOptions
+    /*
+        NSJSONReadingMutableContainers = (1UL << 0),
+       (解析成可变容器NSMutableDictionary与NSMutableArray的嵌套)
+     
+        NSJSONReadingMutableLeaves = (1UL << 1),
+        (解释成不可变容器NSDictionary与NSArray的嵌套)
+        网上说可以吧返回的JSON对象中字符串的值为NSMutableString, 我自己测试没发现,不知道是苹果的bug还是什么,先不管
+     
+        NSJSONReadingAllowFragments = (1UL << 2)
+        能解释不是数组或字典开始的结构  例如 NSString *num=@"\"abcd\"";
+     
+     填0等于填kNilOptions在MacTypes.h定义的
+     (处理方式与NSJSONReadingMutableLeaves类似,但不确定相不相同)
+    */
+    NSDictionary *jsonDic = [NSJSONSerialization JSONObjectWithData:[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"Test" ofType:@"json"]] options: NSJSONReadingMutableLeaves error:nil];
+    
+    NSArray *array = jsonDic[@"key"];
+    NSDictionary *detailDic = array[0];
+    
+    NSLog(@"jsonDic --- %@", jsonDic.classForCoder);
+    NSLog(@"array --- %@", array.classForCoder);
+    NSLog(@"detailDic --- %@", detailDic.classForCoder);
+   
+   // 上面解析出来的jsonDic每层都是不可变的(强行例子....)
+     CFBridgingRelease(CFPropertyListCreateDeepCopy(NULL, (CFDictionaryRef)jsonDic, kCFPropertyListMutableContainersAndLeaves));
+    // 这里用了CFPropertyListCreateDeepCopy之后, 得到的对象每层都是可变的了
 }
 
 - (void)carDemo {
